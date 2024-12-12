@@ -1,0 +1,168 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+class Passport {
+public:
+    std::string name;
+    int number;
+
+    void setData(const std::string &newName, const int newNumber) {
+        name = newName;
+        number = newNumber;
+    }
+
+    friend std::ostream& operator<<(std::ostream &os, const Passport &passport) {
+        os << "Имя владельца: " << passport.name << ", Номер паспорта: " << passport.number;
+        return os;
+    }
+};
+
+class StudentCard {
+public:
+    std::string name;
+    std::string university;
+    int year;
+
+    void setData(const std::string &newName, const std::string &newUniversity, const int newYear) {
+        name = newName;
+        university = newUniversity;
+        year = newYear;
+    }
+
+    friend std::ostream& operator<<(std::ostream &os, const StudentCard &card) {
+        os << "Имя студента: " << card.name << ", Университет: " << card.university << ", Год обучения: " << card.year;
+        return os;
+    }
+};
+
+// Глобальные вектора для хранения паспортов и студенческих билетов
+std::vector<Passport> passports;
+std::vector<StudentCard> studentCards;
+
+// Функция для создания нового паспорта
+void create_passport() {
+    Passport new_passport;
+    
+    std::cout << "Введите имя владельца паспорта: ";
+    std::getline(std::cin, new_passport.name);
+    
+    std::cout << "Введите номер паспорта: ";
+    std::cin >> new_passport.number;
+    std::cin.ignore(); // Очистка буфера ввода после cin >>
+
+    passports.push_back(new_passport); // Добавляем новый паспорт в вектор
+}
+
+// Функция для показа информации о всех паспортах
+void show_all_passports() {
+    if (passports.empty()) {
+        std::cout << "Нет данных о паспортах." << std::endl;
+    } else {
+        for (const auto& passport : passports) {
+            std::cout << passport << std::endl; // Используем перегруженный оператор вывода
+        }
+    }
+}
+
+// Функция для создания нового студенческого билета
+void add_student_card() {
+    StudentCard new_card;
+    
+    std::cout << "Введите имя студента: ";
+    std::getline(std::cin, new_card.name);
+    
+    std::cout << "Введите название университета: ";
+    std::getline(std::cin, new_card.university);
+    
+    std::cout << "Введите год обучения: ";
+    std::cin >> new_card.year;
+    std::cin.ignore(); // Очистка буфера ввода после cin >>
+
+    studentCards.push_back(new_card); // Добавляем новый студенческий билет в вектор
+}
+
+// Функция для показа информации о всех студенческих билетах
+void show_all_student_cards() {
+    if (studentCards.empty()) {
+        std::cout << "Нет данных о студенческих билетах." << std::endl;
+    } else {
+        for (const auto& card : studentCards) {
+            std::cout << card << std::endl; // Используем перегруженный оператор вывода
+        }
+    }
+}
+
+// Функция для поиска количества документов по фамилии
+void find_documents_by_last_name() {
+    if (passports.empty() && studentCards.empty()) {
+        std::cout << "Нет данных о документах." << std::endl;
+        return;
+    }
+    
+    std::string lastName;
+    std::cout << "Введите фамилию для поиска: ";
+    std::getline(std::cin, lastName);
+    
+    int totalCount = 0;
+    
+    // Поиск среди паспортов
+    for (const auto& passport : passports) {
+        if (passport.name.find(lastName) != std::string::npos) {
+            ++totalCount;
+        }
+    }
+    
+    // Поиск среди студенческих билетов
+    for (const auto& card : studentCards) {
+        if (card.name.find(lastName) != std::string::npos) {
+            ++totalCount;
+        }
+    }
+    
+    std::cout << "Количество документов с фамилией '" << lastName << "' равно: " << totalCount << std::endl;
+}
+
+// Основная функция программы
+int main() {
+    int choice = 0;
+    
+    while (choice != 6) {
+        std::cout << "\nМеню:" << std::endl;
+        std::cout << "1. Создать паспорт" << std::endl;
+        std::cout << "2. Показать информацию о всех паспортах" << std::endl;
+        std::cout << "3. Добавить студенческий билет" << std::endl;
+        std::cout << "4. Показать информацию о всех студенческих билетах" << std::endl;
+        std::cout << "5. Найти количество документов по фамилии" << std::endl;
+        std::cout << "6. Выход" << std::endl;
+        
+        std::cout << "Ваш выбор: ";
+        std::cin >> choice;
+        std::cin.ignore();
+        
+        switch(choice) {
+            case 1:
+                create_passport();
+                break;
+            case 2:
+                show_all_passports();
+                break;
+            case 3:
+                add_student_card();
+                break;
+            case 4:
+                show_all_student_cards();
+                break;
+            case 5:
+                find_documents_by_last_name();
+                break;
+            case 6:
+                std::cout << "Выход..." << std::endl;
+                break;
+            default:
+                std::cout << "Неправильный ввод. Попробуйте снова." << std::endl;
+        }
+    }
+    
+    return 0;
+}
